@@ -1,0 +1,80 @@
+/*
+ * ${className}.h
+ *
+ *  Created on: 2012-2-11
+ *      Author: ct
+ */
+
+#ifndef ${CLASSNAMEUPPER}_H_
+#define ${CLASSNAMEUPPER}_H_
+#include <string>
+#include <list>
+#include "Xml.h"
+using std::string;
+using namespace std;
+
+class ${className} : public Xml{
+<#list innerClasses as innerClass>
+class innerClass.name;
+</#list>
+public:
+	${className}();
+	virtual ~${className}();
+
+    template<typename Archive> void Serialize(Archive& anArchive)
+	{ 
+	    anArchive<#rt>
+		<#list elements as element>
+		<#if element.type?index_of("list<") != -1 >
+		&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#t>
+		<#else>
+		&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#t>
+		</#if>
+		</#list>
+		;<#lt>
+	}
+	
+	virtual const char * entryName()
+	{
+	   return "${xmlRoot}";
+	}
+
+
+private:
+<#list elements as element>
+     ${element.type} ${element.name};
+</#list>
+
+<#list innerClasses as innerClass>
+private:
+	class ${innerClass.name} {
+	public:
+		template<typename Archive> void Serialize(Archive& anArchive) {
+		    anArchive<#rt>
+			<#list innerClass.elements as element>
+			<#if element.type?index_of("list<") != -1 >
+			&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#t>
+			<#else>
+			&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#t>
+			</#if>
+			</#list>
+			;<#lt>
+		}
+
+        const virtual char *entryName()
+        {
+            return "${innerClass.name}";
+        }
+
+		string toString()
+		{
+			return ""+<#list innerClass.elements as element>+" ${element.name} "+${element.name}</#list>;
+		}
+    private:
+	<#list innerClass.elements as element>
+	    ${element.type} ${element.name};
+	</#list>
+    };
+</#list>
+};
+#endif /* ${CLASSNAMEUPPER}_H_ */
