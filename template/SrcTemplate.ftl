@@ -13,11 +13,11 @@
 using std::string;
 using namespace std;
 
-<#macro  xmlFormat type name xmlName last> 
+<#macro  xmlFormat type name xmlName first last> 
 <#if type?index_of("list<") != -1 >
-  &TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if last>;</#if>
+<#if !first>                 </#if>&TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if first> <#lt></#if><#if last>;</#if>
 <#else>
-  &TAGGED_OBJECT_CLASS(${name},"${xmlName}")<#if last>;</#if>
+<#if !first>                 </#if>&TAGGED_OBJECT_CLASS(${name},"${xmlName}")<#if last>;</#if>
 </#if>
 </#macro>
 
@@ -36,9 +36,11 @@ public:
 	    anArchive<#rt>
 		<#list elements as element>
 		<#if element_index==elements?size-1 >
-          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName last=true/>
+          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=false last=true/>
+	    <#elseif element_index==0>
+	      <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=true last=false/>
 	    <#else>
-          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName last=false/>
+          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=false last=false/>
 	    </#if>
 		</#list>
 	}

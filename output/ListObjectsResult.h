@@ -25,13 +25,13 @@ public:
 
     template<typename Archive> void Serialize(Archive& anArchive)
 	{ 	
-	    anArchive  &TAGGED_OBJECT_CLASS(name,"ContainerName")
-  &TAGGED_OBJECT_CLASS(prefix,"Prefix")
-  &TAGGED_OBJECT_CLASS(marker,"Marker")
-  &TAGGED_OBJECT_CLASS(truncated,"IsTruncated")
-  &TAGGED_OBJECT_CLASS(maxKeys,"MaxResults")
-  &TAGGED_CONTAINER(contents,"ObjectUnit","ObjectUnit")
-  &TAGGED_CONTAINER(commonPrefixes,"CommonPrefixes","CommonPrefixes");
+	    anArchive&TAGGED_OBJECT_CLASS(name,"ContainerName")
+                 &TAGGED_OBJECT_CLASS(prefix,"Prefix")
+                 &TAGGED_OBJECT_CLASS(marker,"Marker")
+                 &TAGGED_OBJECT_CLASS(truncated,"IsTruncated")
+                 &TAGGED_OBJECT_CLASS(maxKeys,"MaxResults")
+                 &TAGGED_CONTAINER(contents,"ObjectUnit","ObjectUnit")
+                 &TAGGED_CONTAINER(commonPrefixes,"CommonPrefixes","CommonPrefixes");
 	}
 	
 	virtual const char * entryName()
