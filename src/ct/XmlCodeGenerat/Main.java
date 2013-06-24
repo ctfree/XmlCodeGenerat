@@ -21,7 +21,7 @@ public class Main {
 		root.put("className", classInfo.getClassName());
 		root.put("CLASSNAMEUPPER", classInfo.getClassName().toUpperCase());
 		root.put("xmlRoot", classInfo.getXmlRoot());
-		File file = new File(Env.APPLICATION_REAL_PATH + "/../output/out.txt");
+		File file = new File(Env.APPLICATION_REAL_PATH + "/../output/"+classInfo.getClassName()+".h");
 		FreeMarkerUtil.getInstance().createFile("SrcTemplate.txt", root, file);
 	}
 }

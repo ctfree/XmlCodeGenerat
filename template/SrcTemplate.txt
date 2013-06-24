@@ -15,23 +15,32 @@ using namespace std;
 
 class ${className} : public Xml{
 <#list innerClasses as innerClass>
-class innerClass.name;
+class ${innerClass.name};
 </#list>
 public:
 	${className}();
 	virtual ~${className}();
 
     template<typename Archive> void Serialize(Archive& anArchive)
-	{ 
+	{ 	
 	    anArchive<#rt>
 		<#list elements as element>
-		<#if element.type?index_of("list<") != -1 >
-		&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#t>
-		<#else>
-		&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#t>
-		</#if>
+		<#assign test=TAGGED_CONTAINER>
+		${test}
+		<#if element_index==elements?size-1 >
+			<#if element.type?index_of("list<") != -1 >
+		&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}");
+			<#else>
+		&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}");
+			</#if>
+	    <#else>
+	    	<#if element.type?index_of("list<") != -1 >
+        &TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")
+			<#else>
+     	&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")
+			</#if>
+	    </#if>
 		</#list>
-		;<#lt>
 	}
 	
 	virtual const char * entryName()
@@ -39,6 +48,17 @@ public:
 	   return "${xmlRoot}";
 	}
 
+	string toString()
+	{
+		return <#rt>
+		<#list elements as element>
+		<#if element_index==0>
+		"${element.name} "+${element.name}<#t>
+		<#else>
+		+" ${element.name} "+${element.name}<#t>
+		</#if>
+		</#list>;<#lt>
+	}
 
 private:
 <#list elements as element>
@@ -49,16 +69,16 @@ private:
 private:
 	class ${innerClass.name} {
 	public:
+	    <#assign elements=innerClass.elements>
 		template<typename Archive> void Serialize(Archive& anArchive) {
 		    anArchive<#rt>
-			<#list innerClass.elements as element>
+			<#list elements as element>
 			<#if element.type?index_of("list<") != -1 >
-			&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#t>
+			&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#lt>
 			<#else>
-			&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#t>
+			&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#lt>
 			</#if>
-			</#list>
-			;<#lt>
+			</#list>;<#lt>
 		}
 
         const virtual char *entryName()
@@ -68,7 +88,14 @@ private:
 
 		string toString()
 		{
-			return ""+<#list innerClass.elements as element>+" ${element.name} "+${element.name}</#list>;
+			return <#rt>
+			<#list elements as element>
+			<#if element_index==0>
+			"${element.name} "+${element.name}<#t>
+			<#else>
+			+" ${element.name} "+${element.name}<#t>
+			</#if>
+			</#list>;<#lt>
 		}
     private:
 	<#list innerClass.elements as element>

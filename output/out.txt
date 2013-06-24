@@ -14,15 +14,22 @@ using std::string;
 using namespace std;
 
 class ListObjectsResult : public Xml{
-class innerClass.name;
-class innerClass.name;
+class ObjectUnit;
+class CommonPrefixes;
 public:
 	ListObjectsResult();
 	virtual ~ListObjectsResult();
 
     template<typename Archive> void Serialize(Archive& anArchive)
-	{ 
-	    anArchive&TAGGED_OBJECT_CLASS(name,"ContainerName")&TAGGED_OBJECT_CLASS(prefix,"Prefix")&TAGGED_OBJECT_CLASS(marker,"Marker")&TAGGED_OBJECT_CLASS(truncated,"IsTruncated")&TAGGED_OBJECT_CLASS(maxKeys,"MaxResults")&TAGGED_CONTAINER(contents,"ObjectUnit","ObjectUnit")&TAGGED_CONTAINER(commonPrefixes,"CommonPrefixes","CommonPrefixes");
+	{ 	
+	    anArchive&TAGGED_OBJECT_CLASS(name,"ContainerName")
+		&TAGGED_OBJECT_CLASS(prefix,"Prefix")
+		&TAGGED_OBJECT_CLASS(marker,"Marker")
+		&TAGGED_OBJECT_CLASS(truncated,"IsTruncated")
+		&TAGGED_OBJECT_CLASS(maxKeys,"MaxResults")
+		&TAGGED_CONTAINER(contents,"ObjectUnit","ObjectUnit")
+		&TAGGED_CONTAINER(commonPrefixes,"CommonPrefixes","CommonPrefixes")
+		;
 	}
 	
 	virtual const char * entryName()
@@ -44,7 +51,11 @@ private:
 	class ObjectUnit {
 	public:
 		template<typename Archive> void Serialize(Archive& anArchive) {
-		    anArchive&TAGGED_OBJECT_CLASS(objectURI,"ObjectURI")&TAGGED_OBJECT_CLASS(owner,"ObjectURI")&TAGGED_OBJECT_CLASS(storageClass,"StorageClass")&TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata");
+		    anArchive&TAGGED_OBJECT_CLASS(objectURI,"ObjectURI")
+			&TAGGED_OBJECT_CLASS(owner,"ObjectURI")
+			&TAGGED_OBJECT_CLASS(storageClass,"StorageClass")
+			&TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata")
+			;
 		}
 
         const virtual char *entryName()
@@ -54,7 +65,7 @@ private:
 
 		string toString()
 		{
-			return ""++" objectURI "+objectURI+" owner "+owner+" storageClass "+storageClass+" sysMeta "+sysMeta;
+			return "objectURI "+objectURI+" owner "+owner+" storageClass "+storageClass+" sysMeta "+sysMeta;
 		}
     private:
 	    string objectURI;
@@ -66,7 +77,8 @@ private:
 	class CommonPrefixes {
 	public:
 		template<typename Archive> void Serialize(Archive& anArchive) {
-		    anArchive&TAGGED_OBJECT_CLASS(prefix,"Prefix");
+		    anArchive&TAGGED_OBJECT_CLASS(prefix,"Prefix")
+			;
 		}
 
         const virtual char *entryName()
@@ -76,7 +88,7 @@ private:
 
 		string toString()
 		{
-			return ""++" prefix "+prefix;
+			return "prefix "+prefix;
 		}
     private:
 	    string prefix;
