@@ -15,7 +15,7 @@ using namespace std;
 
 <#macro  xmlFormat type name xmlName first last> 
 <#if type?index_of("list<") != -1 >
-<#if !first>                 </#if>&TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if first> <#lt></#if><#if last>;</#if>
+<#if !first>                 </#if>&TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if last>;</#if>
 <#else>
 <#if !first>                 </#if>&TAGGED_OBJECT_CLASS(${name},"${xmlName}")<#if last>;</#if>
 </#if>
@@ -35,13 +35,14 @@ public:
 	{ 	
 	    anArchive<#rt>
 		<#list elements as element>
+		<#assign beFirst=false beLast =false >
 		<#if element_index==elements?size-1 >
-          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=false last=true/>
-	    <#elseif element_index==0>
-	      <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=true last=false/>
-	    <#else>
-          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=false last=false/>
+		   <#assign beLast=true >
+		</#if>
+	    <#if element_index==0>
+	       <#assign beFirst=true >
 	    </#if>
+	     <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=beFirst last=beLast/>
 		</#list>
 	}
 	
@@ -75,12 +76,15 @@ private:
 		template<typename Archive> void Serialize(Archive& anArchive) {
 		    anArchive<#rt>
 			<#list elements as element>
-			<#if element.type?index_of("list<") != -1 >
-			&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")<#lt>
-			<#else>
-			&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")<#lt>
+			<#assign beFirst=false beLast =false >
+			<#if element_index==elements?size-1 >
+			   <#assign beLast=true >
 			</#if>
-			</#list>;<#lt>
+		    <#if element_index==0>
+		       <#assign beFirst=true >
+		    </#if>
+		    <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=beFirst last=beLast/>
+			</#list>
 		}
 
         const virtual char *entryName()

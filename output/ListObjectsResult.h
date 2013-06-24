@@ -58,10 +58,9 @@ private:
 	public:
 		template<typename Archive> void Serialize(Archive& anArchive) {
 		    anArchive&TAGGED_OBJECT_CLASS(objectURI,"ObjectURI")
-&TAGGED_OBJECT_CLASS(owner,"ObjectURI")
-&TAGGED_OBJECT_CLASS(storageClass,"StorageClass")
-&TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata")
-;
+                 &TAGGED_OBJECT_CLASS(owner,"ObjectURI")
+                 &TAGGED_OBJECT_CLASS(storageClass,"StorageClass")
+                 &TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata");
 		}
 
         const virtual char *entryName()
@@ -83,8 +82,7 @@ private:
 	class CommonPrefixes {
 	public:
 		template<typename Archive> void Serialize(Archive& anArchive) {
-		    anArchive&TAGGED_OBJECT_CLASS(prefix,"Prefix")
-;
+		    anArchive&TAGGED_OBJECT_CLASS(prefix,"Prefix");
 		}
 
         const virtual char *entryName()
