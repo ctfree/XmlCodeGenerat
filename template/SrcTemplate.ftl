@@ -13,6 +13,16 @@
 using std::string;
 using namespace std;
 
+<#macro  xmlFormat type name xmlName last> 
+<#if type?index_of("list<") != -1 >
+  &TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if last>;</#if>
+<#else>
+  &TAGGED_OBJECT_CLASS(${name},"${xmlName}")<#if last>;</#if>
+</#if>
+</#macro>
+
+
+ 
 class ${className} : public Xml{
 <#list innerClasses as innerClass>
 class ${innerClass.name};
@@ -25,20 +35,10 @@ public:
 	{ 	
 	    anArchive<#rt>
 		<#list elements as element>
-		<#assign test=TAGGED_CONTAINER>
-		${test}
 		<#if element_index==elements?size-1 >
-			<#if element.type?index_of("list<") != -1 >
-		&TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}");
-			<#else>
-		&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}");
-			</#if>
+          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName last=true/>
 	    <#else>
-	    	<#if element.type?index_of("list<") != -1 >
-        &TAGGED_CONTAINER(${element.name},"${element.xmlName}","${element.type?replace("list<","")?replace(">","")}")
-			<#else>
-     	&TAGGED_OBJECT_CLASS(${element.name},"${element.xmlName}")
-			</#if>
+          <@xmlFormat type=element.type name=element.name xmlName=element.xmlName last=false/>
 	    </#if>
 		</#list>
 	}

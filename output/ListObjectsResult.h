@@ -13,6 +13,9 @@
 using std::string;
 using namespace std;
 
+
+
+ 
 class ListObjectsResult : public Xml{
 class ObjectUnit;
 class CommonPrefixes;
@@ -22,33 +25,79 @@ public:
 
     template<typename Archive> void Serialize(Archive& anArchive)
 	{ 	
-	    anArchive<!-- FREEMARKER ERROR MESSAGE STARTS HERE --><script language=javascript>//"></script><script language=javascript>//'></script><script language=javascript>//"></script><script language=javascript>//'></script></title></xmp></script></noscript></style></object></head></pre></table></form></table></table></table></a></u></i></b><div align=left style='background-color:#FFFF00; color:#FF0000; display:block; border-top:double; padding:2pt; font-size:medium; font-family:Arial,sans-serif; font-style: normal; font-variant: normal; font-weight: normal; text-decoration: none; text-transform: none'><b style='font-size:medium'>FreeMarker template error!</b><pre><xmp>
+	    anArchive  &TAGGED_OBJECT_CLASS(name,"ContainerName")
+  &TAGGED_OBJECT_CLASS(prefix,"Prefix")
+  &TAGGED_OBJECT_CLASS(marker,"Marker")
+  &TAGGED_OBJECT_CLASS(truncated,"IsTruncated")
+  &TAGGED_OBJECT_CLASS(maxKeys,"MaxResults")
+  &TAGGED_CONTAINER(contents,"ObjectUnit","ObjectUnit")
+  &TAGGED_CONTAINER(commonPrefixes,"CommonPrefixes","CommonPrefixes");
+	}
+	
+	virtual const char * entryName()
+	{
+	   return "ListObjectsResult";
+	}
 
-Error on line 28, column 17 in SrcTemplate.txt
-TAGGED_CONTAINER is undefined.
-It cannot be assigned to test
-The problematic instruction:
-----------
-==> assignment: test=TAGGED_CONTAINER [on line 28, column 17 in SrcTemplate.txt]
-----------
+	string toString()
+	{
+		return "name "+name+" prefix "+prefix+" marker "+marker+" truncated "+truncated+" maxKeys "+maxKeys+" contents "+contents+" commonPrefixes "+commonPrefixes;
+	}
 
-Java backtrace for programmers:
-----------
-freemarker.core.InvalidReferenceException: Error on line 28, column 17 in SrcTemplate.txt
-TAGGED_CONTAINER is undefined.
-It cannot be assigned to test
-	at freemarker.core.Assignment.accept(Assignment.java:111)
-	at freemarker.core.Environment.visit(Environment.java:196)
-	at freemarker.core.MixedContent.accept(MixedContent.java:92)
-	at freemarker.core.Environment.visit(Environment.java:196)
-	at freemarker.core.IteratorBlock$Context.runLoop(IteratorBlock.java:172)
-	at freemarker.core.Environment.visit(Environment.java:351)
-	at freemarker.core.IteratorBlock.accept(IteratorBlock.java:95)
-	at freemarker.core.Environment.visit(Environment.java:196)
-	at freemarker.core.MixedContent.accept(MixedContent.java:92)
-	at freemarker.core.Environment.visit(Environment.java:196)
-	at freemarker.core.Environment.process(Environment.java:176)
-	at freemarker.template.Template.process(Template.java:232)
-	at ct.XmlCodeGenerat.FreeMarkerUtil.createFile(FreeMarkerUtil.java:109)
-	at ct.XmlCodeGenerat.Main.main(Main.java:25)
-</xmp></pre></div></html>
+private:
+     string name;
+     string prefix;
+     string marker;
+     bool truncated;
+     int maxKeys;
+     list<ObjectUnit> contents;
+     list<CommonPrefixes> commonPrefixes;
+
+private:
+	class ObjectUnit {
+	public:
+		template<typename Archive> void Serialize(Archive& anArchive) {
+		    anArchive&TAGGED_OBJECT_CLASS(objectURI,"ObjectURI")
+&TAGGED_OBJECT_CLASS(owner,"ObjectURI")
+&TAGGED_OBJECT_CLASS(storageClass,"StorageClass")
+&TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata")
+;
+		}
+
+        const virtual char *entryName()
+        {
+            return "ObjectUnit";
+        }
+
+		string toString()
+		{
+			return "objectURI "+objectURI+" owner "+owner+" storageClass "+storageClass+" sysMeta "+sysMeta;
+		}
+    private:
+	    string objectURI;
+	    string owner;
+	    string storageClass;
+	    class com.onest.webifc.data.object.SystemMetadata sysMeta;
+    };
+private:
+	class CommonPrefixes {
+	public:
+		template<typename Archive> void Serialize(Archive& anArchive) {
+		    anArchive&TAGGED_OBJECT_CLASS(prefix,"Prefix")
+;
+		}
+
+        const virtual char *entryName()
+        {
+            return "CommonPrefixes";
+        }
+
+		string toString()
+		{
+			return "prefix "+prefix;
+		}
+    private:
+	    string prefix;
+    };
+};
+#endif /* LISTOBJECTSRESULT_H_ */
