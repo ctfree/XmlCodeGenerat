@@ -28,6 +28,11 @@ class ${innerClass.name};
 public:
 	${className}();
 	virtual ~${className}();
+	
+    <#list elements as element>
+    ${element.type} get${element.name?cap_first}() const;
+    void set${element.name?cap_first}(${element.type} ${element.name});
+    </#list>
 
     template<typename Archive> void Serialize(Archive& anArchive)
 	{ 	
@@ -48,7 +53,7 @@ public:
 	{
 	   return "${xmlRoot}";
 	}
-
+	
 	string toString()
 	{
 		return <#rt>
