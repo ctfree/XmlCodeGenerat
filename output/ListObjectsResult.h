@@ -14,9 +14,8 @@ using std::string;
 using namespace std;
 
 
-
- 
 class ListObjectsResult : public Xml{
+class SystemMetadata;
 class ObjectUnit;
 class CommonPrefixes;
 public:
@@ -54,11 +53,32 @@ private:
      list<CommonPrefixes> commonPrefixes;
 
 private:
+	class SystemMetadata {
+	public:
+		template<typename Archive> void Serialize(Archive& anArchive) {
+		    anArchive&TAGGED_OBJECT_CLASS(ctime,"Ctime")
+                 &TAGGED_OBJECT_CLASS(size,"Size");
+		}
+
+        const virtual char *entryName()
+        {
+            return "SystemMetadata";
+        }
+
+		string toString()
+		{
+			return "ctime "+ctime+" size "+size;
+		}
+    private:
+	    string ctime;
+	    long size;
+    };
+private:
 	class ObjectUnit {
 	public:
 		template<typename Archive> void Serialize(Archive& anArchive) {
 		    anArchive&TAGGED_OBJECT_CLASS(objectURI,"ObjectURI")
-                 &TAGGED_OBJECT_CLASS(owner,"ObjectURI")
+                 &TAGGED_OBJECT_CLASS(owner,"Owner")
                  &TAGGED_OBJECT_CLASS(storageClass,"StorageClass")
                  &TAGGED_OBJECT_CLASS(sysMeta,"SystemMetadata");
 		}
@@ -76,7 +96,7 @@ private:
 	    string objectURI;
 	    string owner;
 	    string storageClass;
-	    class com.onest.webifc.data.object.SystemMetadata sysMeta;
+	    SystemMetadata sysMeta;
     };
 private:
 	class CommonPrefixes {

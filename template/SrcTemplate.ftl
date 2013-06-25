@@ -21,8 +21,6 @@ using namespace std;
 </#if>
 </#macro>
 
-
- 
 class ${className} : public Xml{
 <#list innerClasses as innerClass>
 class ${innerClass.name};

@@ -141,7 +141,7 @@ public class ClassInfo {
 
 			Method getMethod = null;
 			for (Method method : methods) {
-				if (method.getName().endsWith(methodName)) {
+				if (method.getName().endsWith(methodName) && method.getParameterTypes().length==0) {
 					getMethod = method;
 					break;
 				}
@@ -171,6 +171,13 @@ public class ClassInfo {
 					staticInnerClasses.add(inerClass);
 				}
 				}
+			}
+			if(fieldType.contains("class com.onest.webifc"))
+			{
+				List<Element> inerElements = getElementsFromClass(field[i].getType());
+				String innerName =field[i].getType().getSimpleName();
+				InerClass inerClass = new InerClass(innerName, inerElements);
+				staticInnerClasses.add(inerClass);
 			}
 			Element element = new Element(TypeCover.getCppType(fieldType),
 					name, xmlName);
