@@ -22,7 +22,7 @@ public class TypeCover {
 	
 	public static String getClassType(String name)
 	{
-		String[] entys=name.split("\\.");
+		String[] entys=name.split("[\\.\\$<>]");
 		return entys[entys.length-1];
 	}
 

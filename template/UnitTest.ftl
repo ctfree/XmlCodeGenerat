@@ -10,11 +10,11 @@
 
 TEST(${className}, use) {
 	string xmldata;
-	${className}  v1 v2;
+	${className}  v1,v2;
 	Xml::createXml(xmldata,v1);
     printf("xmldata %s",xmldata.c_str());
 
 	Xml::paseXml(xmldata.c_str(),v2);
-	printf("%s",v2.toString());
+	printf("%s",v2.toString().c_str());
 }
 

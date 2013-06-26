@@ -159,6 +159,32 @@ public class ClassInfo {
 					XmlElement xmlElement = (XmlElement) anno;
 					System.out.println("XmlElement " + xmlElement.name());
 					xmlName = xmlElement.name();
+					if(fieldType.contains("java.util.List"))
+					{
+						String[] entys=fieldType.split("[<>]");
+						String className=entys[entys.length-1];
+						Class clazz1 = null;
+						try {
+							clazz1 = Class.forName(className);
+						} catch (ClassNotFoundException e) {
+							// TODO Auto-generated catch block
+							System.out.println(className);
+							e.printStackTrace();
+							System.exit(-1);
+						}
+						List<Element> inerElements = getElementsFromClass(clazz1);
+						String innerName = clazz1.getSimpleName();
+						InerClass inerClass = new InerClass(innerName, inerElements);
+						staticInnerClasses.add(inerClass);
+					}
+					
+					if(fieldType.contains("class com.onest.webifc"))
+					{
+						List<Element> inerElements = getElementsFromClass(field[i].getType());
+						String innerName =field[i].getType().getSimpleName();
+						InerClass inerClass = new InerClass(innerName, inerElements);
+						staticInnerClasses.add(inerClass);
+					}
 				} else if (anno instanceof XmlElements) {
 					XmlElements xmlElements = (XmlElements) anno;
 					XmlElement xmlElement = xmlElements.value()[0];
@@ -172,13 +198,7 @@ public class ClassInfo {
 				}
 				}
 			}
-			if(fieldType.contains("class com.onest.webifc"))
-			{
-				List<Element> inerElements = getElementsFromClass(field[i].getType());
-				String innerName =field[i].getType().getSimpleName();
-				InerClass inerClass = new InerClass(innerName, inerElements);
-				staticInnerClasses.add(inerClass);
-			}
+	
 			Element element = new Element(TypeCover.getCppType(fieldType),
 					name, xmlName);
 			elements.add(element);

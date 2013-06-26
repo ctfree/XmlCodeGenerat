@@ -21,6 +21,8 @@ import freemarker.template.TemplateException;
 
 public class Main {
 	private static String includeStr = "";
+//	private static String workPath= Env.APPLICATION_REAL_PATH+"/../output/";
+	private static String workPath= "E:/onest/Onest4ClientLib/src/OnestClient/";
 
 	public static void format(Class<?> clazz,String parentDir) throws IOException, TemplateException
 	{
@@ -34,13 +36,13 @@ public class Main {
 		root.put("xmlRoot", classInfo.getXmlRoot());
 		root.put("parentDir", parentDir);
 		parentDir = parentDir+"/";
-		File file = new File(Env.APPLICATION_REAL_PATH + "/../output/"+parentDir+classInfo.getClassName()+".h");
+		File file = new File(workPath+parentDir+classInfo.getClassName()+".h");
 		FreeMarkerUtil.getInstance().createFile("SrcTemplate.ftl", root, file);
 		
-		file = new File(Env.APPLICATION_REAL_PATH + "/../output/"+parentDir+classInfo.getClassName()+".cpp");
+		file = new File(workPath+parentDir+classInfo.getClassName()+".cpp");
 		FreeMarkerUtil.getInstance().createFile("SrcCpp.ftl", root, file);
 		
-		file = new File(Env.APPLICATION_REAL_PATH + "/../output/Test"+classInfo.getClassName()+".cpp");
+		file = new File(workPath+"../unittest/"+"Test"+classInfo.getClassName()+".cpp");
 		FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
 	}
 	
@@ -48,7 +50,7 @@ public class Main {
 	{    for (Class<?> class1 : classList) {
 		    System.out.println("format class "+class1.getName());
         	format(class1,parentDir);
-        	includeStr +="#include "+parentDir+"/"+class1.getSimpleName()+".h\n";
+        	includeStr +="#include \""+parentDir+"/"+class1.getSimpleName()+".h\"\n";
 		}
     }
 	
@@ -56,18 +58,18 @@ public class Main {
 	{
 		List<Class<?>> classList = Lists.newArrayList();
 		classList.add(DeleteObjects.class);
-		classList.add(DeleteObjectsResult.class);
+		classList.add(VersioningConfiguration.class);
 		format(classList,"model");
 		classList.clear();
 		
-		classList.add(LifeCycle.class);
+//		classList.add(LifeCycle.class);
 		classList.add(LifecycleConfiguration.class);
 		format(classList,"req");
 		classList.clear();
 		
-		classList.add(ListMultiPartResult.class);
+//		classList.add(ListMultiPartResult.class);
 		classList.add(DeleteObjectsResult.class);
-		classList.add(ListObjectsResult.class);
+//		classList.add(ListObjectsResult.class);
 		classList.add(ListObjectVersionsResult.class);
 		classList.add(CopyObjectResult.class);
 		format(classList,"result");
@@ -79,6 +81,6 @@ public class Main {
 	public static void main(String[] args) throws IOException, TemplateException {
 
 //		formatAll();
-		format(DeleteObjectsResult.class,"result");
+		format(LifecycleConfiguration.class,"req");
 	}
 }

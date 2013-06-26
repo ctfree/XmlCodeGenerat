@@ -56,14 +56,17 @@ public:
 	
 	string toString()
 	{
-		return <#rt>
+	    stringstream temp;
 		<#list elements as element>
-		<#if element_index==0>
-		"${element.name} "+${element.name}<#t>
+	    <#if element.type?index_of("list<") != -1 >
+	    temp<<" ${element.name}:"<<containerToString(${element.name});
+		<#elseif element.type?cap_first == element.type>
+		temp<<" ${element.name}:"<<${element.name}.toString();
 		<#else>
-		+" ${element.name} "+${element.name}<#t>
+	    temp<<" ${element.name}:"<<${element.name};
 		</#if>
-		</#list>;<#lt>
+		</#list>
+        return temp.str();
 	}
 
 private:
@@ -97,14 +100,17 @@ private:
 
 		string toString()
 		{
-			return <#rt>
+		    stringstream temp;
 			<#list elements as element>
-			<#if element_index==0>
-			"${element.name} "+${element.name}<#t>
+		    <#if element.type?index_of("list<") != -1 >
+		    temp<<" ${element.name}:"<<containerToString(${element.name});
+			<#elseif element.type?cap_first == element.type>
+			temp<<" ${element.name}:"<<${element.name}.toString();
 			<#else>
-			+" ${element.name} "+${element.name}<#t>
+		    temp<<" ${element.name}:"<<${element.name};
 			</#if>
-			</#list>;<#lt>
+			</#list>
+	        return temp.str();
 		}
     private:
 	<#list innerClass.elements as element>
