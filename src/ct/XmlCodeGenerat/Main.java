@@ -21,7 +21,8 @@ import freemarker.template.TemplateException;
 
 public class Main {
 	private static String includeStr = "";
-//	private static String workPath= Env.APPLICATION_REAL_PATH+"/../output/";
+	private static boolean test=true;
+	private static String testPath= Env.APPLICATION_REAL_PATH+"/../output/";
 	private static String workPath= "E:/onest/Onest4ClientLib/src/OnestClient/";
 
 	public static void format(Class<?> clazz,String parentDir) throws IOException, TemplateException
@@ -46,10 +47,42 @@ public class Main {
 		FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
 	}
 	
+	public static void formatAlone(ClassInfo classInfo,String parentDir) throws IOException, TemplateException
+	{
+        System.out.println(classInfo);
+		Map<String, Object> root = new HashMap<String, Object>();
+		root.put("elements", classInfo.getElements());
+		root.put("innerClasses", classInfo.getInnerClasses());
+		root.put("className", classInfo.getClassName());
+		root.put("CLASSNAMEUPPER", classInfo.getClassName().toUpperCase());
+		root.put("xmlRoot", classInfo.getXmlRoot());
+		root.put("parentDir", parentDir);
+		root.put("this", classInfo);
+		parentDir = parentDir+"/";
+		File file = new File(workPath+parentDir+classInfo.getClassName()+".h");
+		FreeMarkerUtil.getInstance().createFile("SrcTemplateAlone.ftl", root, file);
+		
+		file = new File(workPath+parentDir+classInfo.getClassName()+".cpp");
+		FreeMarkerUtil.getInstance().createFile("SrcCpp.ftl", root, file);
+		
+		file = new File(workPath+"../unittest/"+"Test"+classInfo.getClassName()+".cpp");
+		FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
+		
+		for (ClassInfo innerClass : classInfo.getInnerClasses()) {
+			formatAlone(innerClass,"model");
+		}
+	}
+	
+	public static void formatAlone(Class<?> clazz,String parentDir) throws IOException, TemplateException
+	{
+		ClassInfo classInfo =ClassInfo.createFormClass(clazz);
+		formatAlone(classInfo,parentDir);
+	}
+	
 	public static void format(List<Class<?>> classList,String parentDir) throws IOException, TemplateException
 	{    for (Class<?> class1 : classList) {
 		    System.out.println("format class "+class1.getName());
-        	format(class1,parentDir);
+		    formatAlone(class1,parentDir);
         	includeStr +="#include \""+parentDir+"/"+class1.getSimpleName()+".h\"\n";
 		}
     }
@@ -61,8 +94,7 @@ public class Main {
 		classList.add(VersioningConfiguration.class);
 		format(classList,"model");
 		classList.clear();
-		
-//		classList.add(LifeCycle.class);
+	
 		classList.add(LifecycleConfiguration.class);
 		format(classList,"req");
 		classList.clear();
@@ -77,10 +109,29 @@ public class Main {
         System.out.println(includeStr);
 	}
 
+	
+	public static void formatConflict() throws IOException, TemplateException
+	{
+		List<Class<?>> classList = Lists.newArrayList();
+
+		classList.add(ListObjectsResult.class);
+		classList.add(ListObjectVersionsResult.class);
+		format(classList,"result");
+		classList.clear();
+        System.out.println(includeStr);
+	}
 
 	public static void main(String[] args) throws IOException, TemplateException {
+		test=true;
+		if(test)
+        {
+        	workPath= testPath;
+        	formatAlone(LifecycleConfiguration.class,"req");
 
-//		formatAll();
-		format(LifecycleConfiguration.class,"req");
+        }
+        else
+        {
+    		formatAll();	
+        }
 	}
 }

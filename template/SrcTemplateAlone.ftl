@@ -10,6 +10,9 @@
 #include <string>
 #include <list>
 #include "Xml.h"
+<#list innerClasses as innerClass>
+#include "model/${innerClass.className}.h"
+</#list>
 using std::string;
 using namespace std;
 
@@ -22,9 +25,6 @@ using namespace std;
 </#macro>
 
 class ${className} : public Xml{
-<#list innerClasses as innerClass>
-class ${innerClass.className};
-</#list>
 public:
 	${className}();
 	virtual ~${className}();
@@ -74,49 +74,5 @@ private:
      ${element.type} ${element.name};
 </#list>
 
-<#list innerClasses as innerClass>
-private:
-	class ${innerClass.className} {
-	public:
-	    <#assign elements=innerClass.elements>
-		template<typename Archive> void Serialize(Archive& anArchive) {
-		    anArchive<#rt>
-			<#list elements as element>
-			<#assign beFirst=false beLast =false >
-			<#if element_index==elements?size-1 >
-			   <#assign beLast=true >
-			</#if>
-		    <#if element_index==0>
-		       <#assign beFirst=true >
-		    </#if>
-		    <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=beFirst last=beLast/>
-			</#list>
-		}
-
-        const virtual char *entryName()
-        {
-            return "${innerClass.className}";
-        }
-
-		string toString()
-		{
-		    stringstream temp;
-			<#list elements as element>
-		    <#if element.type?index_of("list<") != -1 >
-		    temp<<" ${element.name}:"<<containerToString(${element.name});
-			<#elseif element.type?cap_first == element.type>
-			temp<<" ${element.name}:"<<${element.name}.toString();
-			<#else>
-		    temp<<" ${element.name}:"<<${element.name};
-			</#if>
-			</#list>
-	        return temp.str();
-		}
-    private:
-	<#list innerClass.elements as element>
-	    ${element.type} ${element.name};
-	</#list>
-    };
-</#list>
 };
 #endif /* ${CLASSNAMEUPPER}_H_ */
