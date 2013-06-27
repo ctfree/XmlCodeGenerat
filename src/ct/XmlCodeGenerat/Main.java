@@ -22,6 +22,9 @@ import freemarker.template.TemplateException;
 public class Main {
 	private static String includeStr = "";
 	private static boolean test=true;
+	private static boolean formatH=true;
+	private static boolean formatCpp=true;
+	private static boolean formatTest=true;
 	private static String testPath= Env.APPLICATION_REAL_PATH+"/../output/";
 	private static String workPath= "E:/onest/Onest4ClientLib/src/OnestClient/";
 
@@ -58,16 +61,24 @@ public class Main {
 		root.put("xmlRoot", classInfo.getXmlRoot());
 		root.put("parentDir", parentDir);
 		root.put("this", classInfo);
+		root.put("ComMap", TypeCover.getCppValueMap());
 		parentDir = parentDir+"/";
-		File file = new File(workPath+parentDir+classInfo.getClassName()+".h");
-		FreeMarkerUtil.getInstance().createFile("SrcTemplateAlone.ftl", root, file);
-		
-		file = new File(workPath+parentDir+classInfo.getClassName()+".cpp");
-		FreeMarkerUtil.getInstance().createFile("SrcCpp.ftl", root, file);
-		
-		file = new File(workPath+"../unittest/"+"Test"+classInfo.getClassName()+".cpp");
-		FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
-		
+		File file = null;
+		if(formatH)
+		{
+			file = new File(workPath+parentDir+classInfo.getClassName()+".h");
+			FreeMarkerUtil.getInstance().createFile("SrcTemplateAlone.ftl", root, file);
+		}
+		if(formatCpp)
+		{
+			file = new File(workPath+parentDir+classInfo.getClassName()+".cpp");
+			FreeMarkerUtil.getInstance().createFile("SrcCpp.ftl", root, file);
+		}
+		if(formatTest)
+		{
+			file = new File(workPath+"../unittest/"+"Test"+classInfo.getClassName()+".cpp");
+			FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
+		}
 		for (ClassInfo innerClass : classInfo.getInnerClasses()) {
 			formatAlone(innerClass,"model");
 		}
@@ -122,7 +133,10 @@ public class Main {
 	}
 
 	public static void main(String[] args) throws IOException, TemplateException {
-		test=true;
+		test=false;
+		formatH=false;
+	    formatCpp=false;
+		formatTest=true;
 		if(test)
         {
         	workPath= testPath;

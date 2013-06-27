@@ -13,18 +13,22 @@ import com.google.common.collect.Lists;
 import com.onest.webifc.data.bucket.DeleteObjects;
 
 public class ClassInfo {
-	private List<InerClass> innerClasses;
-	private List<Element> elements;
+	private List<ClassInfo> innerClasses= Lists.newArrayList();
+	private List<Element> elements = Lists.newArrayList();
 	private String className;
 	private String xmlRoot;
+	private Class<?> clazz;
+	
+	public ClassInfo(Class<?> clazz)
+	{
+		this.clazz = clazz;
+	}
 
-	public static List<InerClass> staticInnerClasses = Lists.newArrayList();
-
-	public List<InerClass> getInnerClasses() {
+	public List<ClassInfo> getInnerClasses() {
 		return innerClasses;
 	}
 
-	public void setInnerClasses(List<InerClass> innerClasses) {
+	public void setInnerClasses(List<ClassInfo> innerClasses) {
 		this.innerClasses = innerClasses;
 	}
 
@@ -53,80 +57,60 @@ public class ClassInfo {
 	}
 	
 	
+//	public static class InerClass {
+//		public String name;
+//		public List<Element> elements;
+//
+//		public InerClass(String name, List<Element> elements) {
+//			super();
+//			this.name = name;
+//			this.elements = elements;
+//		}
+//
+//		public String getName() {
+//			return name;
+//		}
+//
+//		public List<Element> getElements() {
+//			return elements;
+//		}
+//
+//		@Override
+//		public String toString() {
+//			return "InerClass [name=" + name + ", elements=" + elements + "]";
+//		}
+//
+//	}
 
-	public static class Element {
-		public String type;
-		public String name;
-		public String xmlName;
-
-		public Element(String type, String name, String xmlName) {
-			super();
-			this.type = type;
-			this.name = name;
-			this.xmlName = xmlName;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public String getXmlName() {
-			return xmlName;
-		}
-
-		@Override
-		public String toString() {
-			return "Element [type=" + type + ", name=" + name + ", xmlName="
-					+ xmlName + "]";
-		}
-
-	}
-
-	public static class InerClass {
-		public String name;
-		public List<Element> elements;
-
-		public InerClass(String name, List<Element> elements) {
-			super();
-			this.name = name;
-			this.elements = elements;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public List<Element> getElements() {
-			return elements;
-		}
-
-		@Override
-		public String toString() {
-			return "InerClass [name=" + name + ", elements=" + elements + "]";
-		}
-
-	}
-
-	public static String fir2Upper(String property) {
+	public  String fir2Upper(String property) {
 		String firChar = property.substring(0, 1);
 		String upperChar = firChar.toUpperCase();
 		String res = upperChar + property.substring(1);
 		return res;
 	}
 
-	public static String fir2Lower(String property) {
+	public  String fir2Lower(String property) {
 		String firChar = property.substring(0, 1);
 		String lowerChar = firChar.toLowerCase();
 		String res = lowerChar + property.substring(1);
 		return res;
 	}
+	
+	public Class<?> classFromName(String name)
+	{
+		Class clazz1 = null;
+		try {
+			clazz1 = Class.forName(name);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			System.out.println("exception"+name);
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		return clazz1;
+	}
 
-	public static List<Element> getElementsFromClass(Class<?> clazz) {
-		List<Element> elements = Lists.newArrayList();
+	public void analyClassInfo() {
 		Method[] methods = clazz.getMethods();
 		Field[] field = clazz.getDeclaredFields();
 		String fieldType = null;
@@ -135,8 +119,6 @@ public class ClassInfo {
 		for (int i = 0; i < field.length; i++) {
 			fieldType = field[i].getGenericType().toString();
 			name = field[i].getName();
-			System.out.println(name + " " + field[i].getType() + " "
-					+ fieldType);
 			String methodName = fir2Upper(field[i].getName());
 
 			Method getMethod = null;
@@ -163,38 +145,26 @@ public class ClassInfo {
 					{
 						String[] entys=fieldType.split("[<>]");
 						String className=entys[entys.length-1];
-						Class clazz1 = null;
-						try {
-							clazz1 = Class.forName(className);
-						} catch (ClassNotFoundException e) {
-							// TODO Auto-generated catch block
-							System.out.println(className);
-							e.printStackTrace();
-							System.exit(-1);
-						}
-						List<Element> inerElements = getElementsFromClass(clazz1);
-						String innerName = clazz1.getSimpleName();
-						InerClass inerClass = new InerClass(innerName, inerElements);
-						staticInnerClasses.add(inerClass);
+						System.out.println("XmlElement type " +fieldType);
+						ClassInfo inerClass = new ClassInfo(classFromName(className));
+						inerClass.analyClassInfo();
+						innerClasses.add(inerClass);
 					}
 					
 					if(fieldType.contains("class com.onest.webifc"))
 					{
-						List<Element> inerElements = getElementsFromClass(field[i].getType());
-						String innerName =field[i].getType().getSimpleName();
-						InerClass inerClass = new InerClass(innerName, inerElements);
-						staticInnerClasses.add(inerClass);
+						ClassInfo inerClass = new ClassInfo(field[i].getType());
+						inerClass.analyClassInfo();
+						innerClasses.add(inerClass);
 					}
 				} else if (anno instanceof XmlElements) {
 					XmlElements xmlElements = (XmlElements) anno;
 					XmlElement xmlElement = xmlElements.value()[0];
 					System.out.println("XmlElement " + xmlElement.name());
 					xmlName = xmlElement.name();
-					List<Element> inerElements = getElementsFromClass(xmlElement
-							.type());
-					String innerName = xmlElement.type().getSimpleName();
-					InerClass inerClass = new InerClass(innerName, inerElements);
-					staticInnerClasses.add(inerClass);
+					ClassInfo inerClass = new ClassInfo(xmlElement.type());
+					inerClass.analyClassInfo();
+					innerClasses.add(inerClass);
 				}
 				}
 			}
@@ -203,11 +173,12 @@ public class ClassInfo {
 					name, xmlName);
 			elements.add(element);
 		}
-		return elements;
-
+		
+		xmlRoot = getXmlRootFromClass();
+		className = clazz.getSimpleName();
 	}
 
-	public static String getXmlRootFromClass(Class<?> clazz) {
+	public String getXmlRootFromClass() {
 		Annotation[] annos = clazz.getAnnotations();
 		System.out.println(" " + annos.length);
 		if (annos.length > 0) {
@@ -219,20 +190,12 @@ public class ClassInfo {
 				}	
 			}
 		}
-		return null;
+		return clazz.getSimpleName();
 	}
 
 	public static ClassInfo createFormClass(Class<?> clazz) {
-		staticInnerClasses.clear();
-		ClassInfo classInfo = new ClassInfo();
-		List<Element> elements = getElementsFromClass(clazz);
-		String xmlroot = getXmlRootFromClass(clazz);
-
-		classInfo.setElements(elements);
-		classInfo.setXmlRoot(xmlroot);
-		classInfo.setClassName(clazz.getSimpleName());
-		classInfo.setInnerClasses(staticInnerClasses);
-
+		ClassInfo classInfo = new ClassInfo(clazz);
+		classInfo.analyClassInfo();
 		return classInfo;
 	}
 

@@ -6,12 +6,26 @@ import com.google.common.collect.Maps;
 
 public class TypeCover {
 	private static Map<String, String> java2cpp = Maps.newHashMap();
-
+	private static Map<String, String> cppValueMap = Maps.newHashMap();
+	
 	static {
 		java2cpp.put("class java.lang.String", "string");
 		java2cpp.put("boolean", "bool");
 		java2cpp.put("int", "int");
 		java2cpp.put("long", "long");
+	}
+	
+	static 
+	{
+		cppValueMap.put("string", "\"abcd\"");
+		cppValueMap.put("bool", "true");
+		cppValueMap.put("int", "10");
+		cppValueMap.put("long", "100");
+	}
+	
+	public static Map<String, String> getCppValueMap()
+	{
+		return cppValueMap;
 	}
 	
 	public static String getListType(String name)
