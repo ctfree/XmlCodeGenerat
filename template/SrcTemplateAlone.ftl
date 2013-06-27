@@ -16,9 +16,9 @@
 using std::string;
 using namespace std;
 
-<#macro  xmlFormat type name xmlName first last> 
+<#macro  xmlFormat type name xmlName childName first last> 
 <#if type?index_of("list<") != -1 >
-<#if !first>                 </#if>&TAGGED_CONTAINER(${name},"${xmlName}","${type?replace("list<","")?replace(">","")}")<#if last>;</#if>
+<#if !first>                 </#if>&TAGGED_CONTAINER(${name},"${xmlName}","${childName}")<#if last>;</#if>
 <#else>
 <#if !first>                 </#if>&TAGGED_OBJECT_CLASS(${name},"${xmlName}")<#if last>;</#if>
 </#if>
@@ -45,7 +45,7 @@ public:
 	    <#if element_index==0>
 	       <#assign beFirst=true >
 	    </#if>
-	     <@xmlFormat type=element.type name=element.name xmlName=element.xmlName first=beFirst last=beLast/>
+	     <@xmlFormat type=element.type name=element.name xmlName=element.xmlName childName=element.childName first=beFirst last=beLast/>
 		</#list>
 	}
 	

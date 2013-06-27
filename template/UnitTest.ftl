@@ -54,9 +54,9 @@ TEST(${className}, use) {
     <@initValue classInfo=this name="v1" suffix="" />
 	
 	Xml::createXml(xmldata,v1);
-    printf("\n%s",xmldata.c_str());
+    printf("\n%s\n",xmldata.c_str());
 
 	Xml::paseXml(xmldata.c_str(),v2);
-	printf("%s",v2.toString().c_str());
+	printf("%s\n",v2.toString().c_str());
 }
 

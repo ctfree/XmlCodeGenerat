@@ -4,6 +4,7 @@ public class Element {
 	public String type;
 	public String name;
 	public String xmlName;
+	public String childName="";
 
 	public Element(String type, String name, String xmlName) {
 		super();
@@ -24,6 +25,15 @@ public class Element {
 		return xmlName;
 	}
 
+	public String getChildName() {
+		return childName;
+	}
+
+	public void setChildName(String childName) {
+		this.childName = childName;
+	}
+
+	
 	@Override
 	public String toString() {
 		return "Element [type=" + type + ", name=" + name + ", xmlName="

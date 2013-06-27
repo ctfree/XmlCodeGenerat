@@ -28,6 +28,7 @@ public class Main {
 	private static String testPath= Env.APPLICATION_REAL_PATH+"/../output/";
 	private static String workPath= "E:/onest/Onest4ClientLib/src/OnestClient/";
 
+	private static int Delp= 0;
 	public static void format(Class<?> clazz,String parentDir) throws IOException, TemplateException
 	{
 		ClassInfo classInfo =ClassInfo.createFormClass(clazz);
@@ -74,11 +75,12 @@ public class Main {
 			file = new File(workPath+parentDir+classInfo.getClassName()+".cpp");
 			FreeMarkerUtil.getInstance().createFile("SrcCpp.ftl", root, file);
 		}
-		if(formatTest)
+		if(formatTest&&Delp==0)
 		{
 			file = new File(workPath+"../unittest/"+"Test"+classInfo.getClassName()+".cpp");
 			FreeMarkerUtil.getInstance().createFile("UnitTest.ftl", root, file);
 		}
+		Delp++;
 		for (ClassInfo innerClass : classInfo.getInnerClasses()) {
 			formatAlone(innerClass,"model");
 		}
@@ -93,6 +95,7 @@ public class Main {
 	public static void format(List<Class<?>> classList,String parentDir) throws IOException, TemplateException
 	{    for (Class<?> class1 : classList) {
 		    System.out.println("format class "+class1.getName());
+		    Delp = 0;
 		    formatAlone(class1,parentDir);
         	includeStr +="#include \""+parentDir+"/"+class1.getSimpleName()+".h\"\n";
 		}
@@ -134,13 +137,13 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, TemplateException {
 		test=false;
-		formatH=false;
-	    formatCpp=false;
+		formatH=true;
+	    formatCpp=true;
 		formatTest=true;
 		if(test)
         {
         	workPath= testPath;
-        	formatAlone(LifecycleConfiguration.class,"req");
+        	formatAlone(ListObjectVersionsResult.class,"req");
 
         }
         else

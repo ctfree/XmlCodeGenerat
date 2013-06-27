@@ -6,8 +6,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.google.common.collect.Lists;
 import com.onest.webifc.data.bucket.DeleteObjects;
@@ -114,9 +116,11 @@ public class ClassInfo {
 		Method[] methods = clazz.getMethods();
 		Field[] field = clazz.getDeclaredFields();
 		String fieldType = null;
-		String name = null;
-		String xmlName = null;
 		for (int i = 0; i < field.length; i++) {
+			String name = null;
+			String xmlName = null;
+			String childName = null;
+			boolean noNeed = false;
 			fieldType = field[i].getGenericType().toString();
 			name = field[i].getName();
 			String methodName = fir2Upper(field[i].getName());
@@ -137,6 +141,17 @@ public class ClassInfo {
 			System.out.println(methodName + " " + annos.length);
 			if (annos.length > 0) {
 				for (Annotation anno : annos) {
+				if(anno instanceof XmlTransient )
+				{
+					     noNeed = true; 
+                         break;
+				}	
+					
+				if(anno instanceof XmlElementWrapper )
+				{
+					XmlElementWrapper xmlElementWrapper = (XmlElementWrapper) anno;
+					xmlName =xmlElementWrapper.name();
+				}
 				if (anno instanceof XmlElement) {
 					XmlElement xmlElement = (XmlElement) anno;
 					System.out.println("XmlElement " + xmlElement.name());
@@ -161,16 +176,28 @@ public class ClassInfo {
 					XmlElements xmlElements = (XmlElements) anno;
 					XmlElement xmlElement = xmlElements.value()[0];
 					System.out.println("XmlElement " + xmlElement.name());
-					xmlName = xmlElement.name();
+					if(xmlName == null)
+					{
+						xmlName="";
+					}
+					childName =xmlElement.name();
 					ClassInfo inerClass = new ClassInfo(xmlElement.type());
 					inerClass.analyClassInfo();
+					inerClass.setXmlRoot(xmlElement.name());
 					innerClasses.add(inerClass);
+					
 				}
 				}
+			}
+			if(noNeed)
+			{
+				continue;
 			}
 	
 			Element element = new Element(TypeCover.getCppType(fieldType),
 					name, xmlName);
+			if(childName!=null)
+				element.setChildName(childName);
 			elements.add(element);
 		}
 		
